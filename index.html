@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Scope</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+[v-cloak]{display:none}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#eef0f5;--sf:#fff;--sf2:#f5f6f9;--bd:rgba(0,0,0,0.07);--bd2:rgba(0,0,0,0.13);
+  --tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;
+  --w:#2563eb;--wl:#eff6ff;--wm:#dbeafe;
+  --p:#7c3aed;--pl:#f5f3ff;--pm:#ede9fe;
+  --acc:var(--w);--acl:var(--wl);--acm:var(--wm);
+  --cr:#ef4444;--cr-l:#fef2f2;--cr-m:#fee2e2;
+  --hi:#f59e0b;--hi-l:#fffbeb;--hi-m:#fef3c7;
+  --md:#10b981;--md-l:#ecfdf5;--md-m:#d1fae5;
+  --lo:#9ca3af;--lo-l:#f9fafb;--lo-m:#f3f4f6;
+  --ok:#10b981;--ok-bg:#ecfdf5;--er:#ef4444;--er-bg:#fef2f2;
+  --wn:#d97706;--wn-bg:#fffbeb;--wn-b:#fde68a;
+  --r:12px;--rs:8px;
+  --sh:0 1px 3px rgba(0,0,0,0.07),0 4px 14px rgba(0,0,0,0.05);
+  --sh-md:0 4px 20px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,0.06);
+  --sh-sm:0 1px 2px rgba(0,0,0,0.06)
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0c0c0e;--sf:#18181b;--sf2:#1f1f24;--bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);
+  --tx:#f4f4f5;--tx2:#a1a1aa;--tx3:#52525b;
+  --w:#3b82f6;--wl:rgba(59,130,246,0.13);--wm:rgba(59,130,246,0.22);
+  --p:#8b5cf6;--pl:rgba(139,92,246,0.13);--pm:rgba(139,92,246,0.22);
+  --cr:#f87171;--cr-l:rgba(248,113,113,0.1);--cr-m:rgba(248,113,113,0.2);
+  --hi:#fbbf24;--hi-l:rgba(251,191,36,0.1);--hi-m:rgba(251,191,36,0.2);
+  --md:#34d399;--md-l:rgba(52,211,153,0.1);--md-m:rgba(52,211,153,0.2);
+  --lo:#71717a;--lo-l:rgba(113,113,122,0.1);--lo-m:rgba(113,113,122,0.18);
+  --ok:#34d399;--ok-bg:rgba(52,211,153,0.12);--er:#f87171;--er-bg:rgba(248,113,113,0.12);
+  --wn:#fbbf24;--wn-bg:rgba(251,191,36,0.1);--wn-b:rgba(251,191,36,0.3);
+  --sh:0 1px 3px rgba(0,0,0,0.3),0 4px 14px rgba(0,0,0,0.25);
+  --sh-md:0 4px 20px rgba(0,0,0,0.35),0 2px 8px rgba(0,0,0,0.2);
+}}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border-radius:var(--rs);transition:all .15s;font-weight:500}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,select,textarea{font-family:inherit;font-size:.875rem;background:var(--sf);color:var(--tx);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:9px 13px;width:100%;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acl)}
+textarea{resize:vertical;line-height:1.6}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+/* Lock */
+.lk{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem;background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#1e3a8a 100%)}
+.lk-card{background:var(--sf);border-radius:20px;padding:2.75rem 2.25rem;width:100%;max-width:380px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.3)}
+.lk-logo{width:60px;height:60px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 8px 24px rgba(79,70,229,0.35)}
+.lk-logo svg{width:28px;height:28px;stroke:#fff;stroke-width:2;fill:none}
+.lk-card h1{font-size:1.75rem;font-weight:800;letter-spacing:-0.03em;margin:0 0 6px}
+.lk-card p{font-size:.85rem;color:var(--tx3);margin-bottom:2rem}
+.lk-card input{text-align:center;letter-spacing:.1em;margin-bottom:12px;font-size:.95rem}
+.lk-btn{width:100%;padding:13px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:var(--r);font-size:.92rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(79,70,229,0.3)}
+.lk-btn:hover{opacity:.92;transform:translateY(-1px)}
+.lk-hint{font-size:.72rem;color:var(--tx3);margin-top:1.25rem;line-height:1.7}
+/* Nav */
+.nav{background:linear-gradient(135deg,#1e1b4b 0%,#2e1065 50%,#1e3a8a 100%);padding:0 1.5rem;display:flex;align-items:center;gap:2px;position:sticky;top:0;z-index:50;overflow-x:auto;box-shadow:0 2px 16px rgba(0,0,0,0.25)}
+.brand{font-size:1.05rem;font-weight:800;letter-spacing:-0.02em;background:linear-gradient(135deg,#a5b4fc,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-right:1.25rem;padding:.9rem 0;flex-shrink:0}
+.nt{background:none;border:none;border-bottom:2px solid transparent;border-radius:0;padding:.9rem .85rem;font-size:.79rem;color:rgba(255,255,255,0.5);font-weight:600;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px;transition:color .15s}
+.nt:hover{color:rgba(255,255,255,0.85)}
+.nt.aw{color:#93c5fd;border-bottom-color:#60a5fa}
+.nt.ap{color:#c4b5fd;border-bottom-color:#a78bfa}
+.nt.an{color:#fff;border-bottom-color:rgba(255,255,255,0.6)}
+.pip{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pip-w{background:#60a5fa}.pip-p{background:#a78bfa}
+.nr{margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.ib{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:7px;color:rgba(255,255,255,0.65);border-radius:var(--rs)}.tc .ib{background:transparent;border:none;padding:6px;color:var(--tx3);border-radius:var(--rs)}.tc .ib:hover{background:var(--sf2);color:var(--tx2)}.tc .ib svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.75;fill:none;display:block}
+.ib:hover{background:rgba(255,255,255,0.16);color:#fff}
+.ib svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.75;fill:none;display:block}
+.ib-label{font-size:.72rem;font-weight:600;padding:6px 11px;display:flex;align-items:center;gap:5px}
+/* Layout */
+.pg{max-width:760px;margin:0 auto;padding:1.75rem 1.25rem 6rem}
+/* Buttons */
+.btn{font-size:.83rem;padding:8px 16px;border:1.5px solid var(--bd2);background:var(--sf);color:var(--tx);font-family:inherit;border-radius:var(--rs);box-shadow:var(--sh-sm)}
+.btn:hover:not(:disabled){background:var(--sf2)}
+.btp{background:linear-gradient(135deg,var(--w),var(--p));color:#fff;border:none;padding:9px 18px;font-size:.83rem;font-family:inherit;font-weight:700;border-radius:var(--rs);box-shadow:0 2px 8px rgba(37,99,235,0.25)}
+.btp:hover:not(:disabled){opacity:.9;transform:translateY(-1px)}
+.bts{font-size:.76rem;padding:6px 12px}
+.btg{background:var(--sf);color:var(--tx2);border:1.5px solid var(--bd2);font-size:.83rem;padding:8px 16px;font-family:inherit;border-radius:var(--rs)}
+.btg:hover:not(:disabled){background:var(--sf2);color:var(--tx)}
+.btai{background:var(--acl);color:var(--acc);border:1.5px solid var(--acc);font-size:.83rem;padding:8px 16px;font-family:inherit;font-weight:700;border-radius:var(--rs)}
+.btai.on{background:var(--acc);color:#fff}
+.abar{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+/* Stats */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.sc{background:var(--sf);border:none;border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;cursor:pointer;transition:box-shadow .2s,transform .15s;position:relative;overflow:hidden}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sc-color,var(--bd2));border-radius:var(--r) var(--r) 0 0}
+.sc:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.sc.active{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.sc.active::after{height:4px}
+.sl{font-size:.67rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;font-weight:600}
+.sv{font-size:1.75rem;font-weight:800;line-height:1;letter-spacing:-0.03em}
+/* Progress */
+.prog-section{background:var(--sf);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;margin-bottom:1.25rem}
+.prog-row{display:flex;justify-content:space-between;font-size:.76rem;color:var(--tx2);margin-bottom:5px;font-weight:600}
+.pbar{height:8px;background:var(--bd);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.pfill{height:100%;border-radius:4px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.pfill-tasks{background:linear-gradient(90deg,var(--w),var(--p))}
+.pfill-time{background:linear-gradient(90deg,var(--ok),#34d399)}
+.pfill-cap{transition:width .4s}
+.capr{display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--tx2);font-weight:500;padding-top:8px;border-top:1px solid var(--bd);margin-top:4px}
+.capb{flex:1;height:7px;background:var(--bd);border-radius:4px;overflow:hidden}
+/* Panel */
+.panel{background:var(--sf);border:none;border-radius:var(--r);box-shadow:var(--sh);padding:1.5rem;margin-bottom:1.25rem}
+.pt{font-size:.92rem;font-weight:700;margin-bottom:1rem;letter-spacing:-0.01em}
+.fs{display:flex;flex-direction:column;gap:12px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl{font-size:.72rem;color:var(--tx2);font-weight:600;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fa{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.qr{display:flex;gap:8px}.qr input{flex:1}
+.pbox{background:var(--sf2);border:1.5px solid var(--bd2);border-radius:var(--rs);padding:1.25rem;margin-top:1rem}
+.phd{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:12px}
+.etxt{font-size:.76rem;color:var(--cr);margin-top:7px;font-weight:500}
+.otxt{font-size:.76rem;color:var(--ok);margin-top:7px;font-weight:500}
+/* View tabs */
+.vts{display:flex;gap:4px;margin-bottom:1rem;background:var(--sf);border-radius:var(--r);padding:5px;box-shadow:var(--sh-sm)}
+.vt{background:transparent;border:none;padding:7px 14px;font-size:.79rem;color:var(--tx2);font-family:inherit;font-weight:600;border-radius:calc(var(--r) - 4px)}
+.vt.on{background:var(--acl);color:var(--acc);box-shadow:var(--sh-sm)}
+.vt:hover:not(.on){background:var(--sf2);color:var(--tx)}
+.vbd{display:inline-block;font-size:.63rem;padding:1px 7px;border-radius:999px;margin-left:5px;background:var(--acc);color:#fff;font-weight:700}
+.dhr{border:none;border-top:1.5px solid var(--bd);margin-bottom:1.25rem}
+/* Tasks */
+.tl{display:flex;flex-direction:column;gap:8px}
+.tc{background:var(--sf);border:none;border-radius:var(--r);box-shadow:var(--sh);padding:14px 16px;border-left:4px solid transparent;display:flex;gap:12px;align-items:flex-start;transition:box-shadow .2s,transform .1s}
+.tc:not(.editing):not(.done){cursor:grab}
+.tc:hover:not(.done){box-shadow:var(--sh-md)}
+.tc.dragging{opacity:.35;transform:scale(.98)}
+.tc.dov{box-shadow:0 -3px 0 var(--acc),var(--sh-md)}
+.tc.done{opacity:.5}
+.tc.editing{cursor:default;border-left-color:var(--acc)!important;background:var(--acl)}
+.tc.blocked-card{opacity:.7}
+.tc.select-mode{cursor:pointer}
+.ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--bd2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;padding:0;transition:all .15s}
+.ck:hover:not(:disabled){border-color:var(--acc);background:var(--acl)}
+.ck.on{background:var(--ok);border-color:var(--ok)}
+.ck svg{width:11px;height:11px;stroke:#fff;stroke-width:3;fill:none}
+.sel-ck{width:20px;height:20px;border-radius:5px;border:2px solid var(--bd2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;padding:0;transition:all .15s}
+.sel-ck.on{background:var(--acc);border-color:var(--acc)}
+.sel-ck svg{width:10px;height:10px;stroke:#fff;stroke-width:3;fill:none}
+.tb{flex:1;min-width:0}
+.ttt{font-size:.9rem;font-weight:600;line-height:1.4;letter-spacing:-0.01em}
+.done .ttt{text-decoration:line-through;color:var(--tx3);font-weight:400}
+.tgs{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.tg{font-size:.67rem;padding:3px 9px;border-radius:999px;white-space:nowrap;font-weight:600;letter-spacing:.02em}
+.tgc{background:var(--sf2);color:var(--tx2);border:1.5px solid var(--bd2)}
+.tgcf{background:var(--wn-bg);color:var(--wn);border:1.5px solid var(--wn-b)}
+.tgr{background:var(--acm);color:var(--acc)}
+.tg-blocked{background:var(--cr-m);color:var(--cr)}
+.tmt{font-size:.72rem;color:var(--tx3);margin-top:6px;display:flex;flex-wrap:wrap;gap:10px;font-weight:500}
+.tmt .ov{color:var(--cr);font-weight:600}
+.tnts{font-size:.79rem;color:var(--tx2);margin-top:10px;line-height:1.65;white-space:pre-wrap;padding:10px 12px;background:var(--sf2);border-radius:var(--rs)}
+.tac{display:flex;gap:4px;flex-shrink:0;align-items:flex-start;padding-top:1px}
+.snr{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center;font-size:.74rem;color:var(--tx3);padding:10px 12px;background:var(--sf2);border-radius:var(--rs)}
+.ndg{background:var(--wn-bg);border:1.5px solid var(--wn-b);border-radius:var(--rs);padding:8px 12px;margin-top:10px;font-size:.76rem;color:var(--wn);display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:500}
+.esn{background:linear-gradient(135deg,var(--hi-l),var(--hi-m));border:1.5px solid var(--wn-b);border-radius:var(--r);padding:12px 16px;font-size:.78rem;color:var(--wn);margin-bottom:1.25rem;display:flex;gap:10px;align-items:center;font-weight:600}
+/* Edit panel */
+.edit-panel{flex:1;min-width:0}
+.edit-panel .fs{gap:10px}
+.edit-panel input,.edit-panel select,.edit-panel textarea{font-size:.82rem;padding:8px 11px}
+/* Empty */
+.empty{text-align:center;padding:4rem 1rem;color:var(--tx3)}
+.empty svg{width:40px;height:40px;stroke:var(--bd2);stroke-width:1.2;fill:none;margin:0 auto 14px;display:block}
+.empty p{font-size:.875rem;font-weight:500}
+/* Weekly */
+.wk-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.wk-nav h2{font-size:1.05rem;font-weight:700;letter-spacing:-0.01em}
+.wk-nav-btns{display:flex;gap:6px;align-items:center}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:1.25rem}
+.dc{background:var(--sf);border:none;border-radius:var(--r);box-shadow:var(--sh);padding:10px 8px;cursor:pointer;min-height:90px;transition:box-shadow .15s,transform .1s}
+.dc:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.dc.dt{background:linear-gradient(135deg,var(--wl),var(--acm));box-shadow:0 2px 12px rgba(37,99,235,0.15)}
+.dc.ds{box-shadow:0 0 0 2px var(--acc),var(--sh-md)}
+.dn{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;color:var(--tx3);margin-bottom:3px;font-weight:700}
+.dd{font-size:1.1rem;font-weight:800;margin-bottom:6px;letter-spacing:-0.02em}
+.dt .dd{color:var(--acc)}
+.dps{display:flex;flex-direction:column;gap:3px}
+.dp{font-size:.58rem;padding:2px 6px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.dpw{background:var(--wm);color:var(--w)}.dpp{background:var(--pm);color:var(--p)}.dpd{opacity:.4;text-decoration:line-through}
+.dcp{height:4px;border-radius:2px;margin-top:7px}
+.dm{font-size:.58rem;color:var(--tx3);margin-top:3px;font-weight:500}
+.wdt{background:var(--sf);border:none;border-radius:var(--r);box-shadow:var(--sh);padding:1.5rem;margin-bottom:1rem}
+.wdh{font-size:.95rem;font-weight:700;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;letter-spacing:-0.01em}
+.wtr{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd);font-size:.82rem}
+.wtr:last-child{border-bottom:none}
+.wwl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+/* Goals */
+.gc{background:var(--sf);border:none;border-radius:var(--r);box-shadow:var(--sh);padding:1.5rem;margin-bottom:.85rem}
+.gc-add{background:var(--sf2);border-radius:var(--rs);padding:1rem;margin-top:1rem}
+.gt{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bd);font-size:.8rem}
+.gt:last-child{border-bottom:none}
+/* Scratch */
+.scr{margin-top:2.5rem}
+.scrl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:8px}
+.scra{width:100%;min-height:120px;background:var(--sf);border:1.5px solid var(--bd2);border-radius:var(--r);padding:14px;font-size:.83rem;color:var(--tx);line-height:1.7;resize:vertical;font-family:inherit;box-shadow:var(--sh-sm)}
+.scra:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acl)}
+/* Modals */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.mb{background:var(--sf);border-radius:18px;padding:2rem;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.25)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.mt{font-size:1.05rem;font-weight:700;letter-spacing:-0.02em}
+.brf-txt{font-size:.86rem;line-height:1.9;color:var(--tx2);white-space:pre-wrap}
+/* Focus Mode */
+.focus-overlay{position:fixed;inset:0;background:#0a0a0f;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
+.focus-badge{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--acc);margin-bottom:1.5rem;opacity:.8}
+.focus-title{font-size:2rem;font-weight:800;color:#fff;line-height:1.3;max-width:600px;letter-spacing:-0.02em;margin-bottom:1rem}
+.focus-notes{font-size:.9rem;color:rgba(255,255,255,0.45);max-width:500px;margin-bottom:2rem;line-height:1.6}
+.focus-timer{font-size:4rem;font-weight:800;color:var(--acc);letter-spacing:.05em;font-variant-numeric:tabular-nums;margin-bottom:2.5rem;font-family:monospace}
+.focus-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.focus-counter{font-size:.75rem;color:rgba(255,255,255,0.3);margin-top:2rem;font-weight:500}
+/* Bulk action bar */
+.bulk-bar{position:fixed;bottom:0;left:0;right:0;background:var(--tx);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px;z-index:100;box-shadow:0 -4px 24px rgba(0,0,0,0.2);flex-wrap:wrap}
+.bulk-count{font-size:.85rem;font-weight:700;margin-right:8px}
+.bulk-sep{width:1px;height:20px;background:rgba(255,255,255,0.2)}
+.bulk-btn{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:.8rem;padding:7px 14px}
+.bulk-btn:hover{background:rgba(255,255,255,0.22)}
+.bulk-btn.danger{background:rgba(239,68,68,0.25);border-color:rgba(239,68,68,0.4);color:#fca5a5}
+/* Archive note */
+.archive-note{text-align:center;padding:.75rem;font-size:.75rem;color:var(--tx3);font-weight:500}
+/* Slider */
+.slw{display:flex;align-items:center;gap:12px}
+.slw input[type=range]{flex:1;accent-color:var(--acc)}
+.slv{font-size:.76rem;color:var(--tx2);min-width:48px;text-align:right;font-weight:600}
+/* Recur */
+.rds{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.rd{font-size:.7rem;padding:4px 9px;border:1.5px solid var(--bd2);border-radius:var(--rs);cursor:pointer;background:var(--sf);font-family:inherit;font-weight:600}
+.rd.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+/* Settings */
+.ss{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1.5px solid var(--bd)}
+.ss:last-child{border-bottom:none;margin-bottom:0}
+.ssl{font-size:.88rem;font-weight:700;margin-bottom:6px;letter-spacing:-0.01em}
+.ssnote{font-size:.75rem;color:var(--tx2);line-height:1.6;margin-bottom:10px}
+.ssnote a{color:var(--w);font-weight:600}
+.ssr{display:flex;gap:8px}.ssr input,.ssr select{flex:1}
+.sec-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.sec-hd h2{font-size:1.1rem;font-weight:800;letter-spacing:-0.02em}
+@media(max-width:580px){.sg{grid-template-columns:repeat(2,1fr)}.wk{gap:4px}.dc{padding:7px 5px}.dd{font-size:.9rem}.fg2{grid-template-columns:1fr}.abar{gap:6px}}
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+
+  <!-- LOCK -->
+  <div v-if="!authed" class="lk">
+    <div class="lk-card">
+      <div class="lk-logo"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <h1>Scope</h1>
+      <p>Your personal productivity system</p>
+      <input type="password" v-model="lkPw" @keydown.enter="unlock" placeholder="Enter password"/>
+      <button class="lk-btn" @click="unlock" :disabled="lkLoading">{{ lkLoading?'Checking...':'Unlock' }}</button>
+      <div v-if="lkErr" style="font-size:.76rem;color:var(--cr);margin-top:8px">{{ lkErr }}</div>
+      <div class="lk-hint">Default: <strong>myPA2024</strong> &mdash; change in Settings</div>
+    </div>
+  </div>
+
+  <div v-else>
+
+    <!-- FOCUS MODE -->
+    <div v-if="focusMode" class="focus-overlay">
+      <div v-if="focusTask">
+        <div class="focus-badge">Focus mode &mdash; Task {{ focusIndex+1 }} of {{ focusTasks.length }}</div>
+        <div class="focus-title">{{ focusTask.title }}</div>
+        <div v-if="focusTask.notes" class="focus-notes">{{ focusTask.notes }}</div>
+        <div class="focus-timer">{{ elapsedFmt }}</div>
+        <div class="focus-btns">
+          <button class="btp" style="padding:12px 28px;font-size:.95rem" @click="focusDone">Mark done</button>
+          <button class="btg" style="padding:12px 20px;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15)" @click="focusSkip">Skip</button>
+          <button class="btg" style="padding:12px 20px;color:rgba(255,255,255,0.4);background:transparent;border-color:rgba(255,255,255,0.1)" @click="exitFocus">Exit</button>
+        </div>
+        <div v-if="focusTask.timeEstimate" class="focus-counter">Estimated: {{ fmtTime(focusTask.timeEstimate) }}</div>
+      </div>
+      <div v-else style="color:rgba(255,255,255,0.5)">
+        <div style="font-size:1.5rem;font-weight:700;margin-bottom:1rem;color:#fff">All done!</div>
+        <p>No more tasks in the queue.</p>
+        <button class="btg" style="margin-top:1.5rem;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15)" @click="exitFocus">Exit focus mode</button>
+      </div>
+    </div>
+
+    <!-- MORNING BRIEFING MODAL -->
+    <div v-if="showBrf" class="mo" @click.self="showBrf=false">
+      <div class="mb">
+        <div class="mh">
+          <div class="mt">Good morning &mdash; here's your day</div>
+          <button class="btg bts" @click="showBrf=false">Close</button>
+        </div>
+        <div v-if="!settings.apiKey" style="padding:1.5rem;text-align:center;color:var(--tx2)">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--bd2)" stroke-width="1.5" style="margin:0 auto 12px;display:block"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p style="font-size:.88rem;font-weight:600;margin-bottom:6px">API key needed</p>
+          <p style="font-size:.8rem;color:var(--tx3)">Add your Anthropic API key in Settings to enable AI-powered briefings.</p>
+          <button class="btp bts" style="margin-top:1rem" @click="showBrf=false;tab='settings'">Go to Settings</button>
+        </div>
+        <div v-else-if="brfLoad" style="text-align:center;padding:2rem;color:var(--tx3)">Generating your briefing...</div>
+        <div v-else class="brf-txt">{{ brfText||'Could not generate briefing. Check your API key in Settings.' }}</div>
+        <div v-if="!brfLoad&&settings.apiKey" style="margin-top:1rem;display:flex;justify-content:flex-end">
+          <button class="btg bts" @click="loadBrf">Regenerate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EOD REVIEW MODAL -->
+    <div v-if="showEOD" class="mo" @click.self="showEOD=false">
+      <div class="mb">
+        <div class="mh">
+          <div class="mt">End of day review</div>
+          <button class="btg bts" @click="showEOD=false">Close</button>
+        </div>
+        <div v-if="!settings.apiKey" style="padding:1.5rem;text-align:center;color:var(--tx2)">
+          <p style="font-size:.88rem;font-weight:600;margin-bottom:6px">API key needed</p>
+          <p style="font-size:.8rem;color:var(--tx3)">Add your Anthropic API key in Settings to enable AI-powered reviews.</p>
+          <button class="btp bts" style="margin-top:1rem" @click="showEOD=false;tab='settings'">Go to Settings</button>
+        </div>
+        <div v-else-if="eodLoad" style="text-align:center;padding:2rem;color:var(--tx3)">Reviewing your day...</div>
+        <div v-else class="brf-txt">{{ eodText||'Could not generate review. Check your API key in Settings.' }}</div>
+        <div v-if="!eodLoad&&settings.apiKey" style="margin-top:1rem;display:flex;justify-content:flex-end">
+          <button class="btg bts" @click="loadEOD">Regenerate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BULK ACTION BAR -->
+    <div v-if="selectMode&&selectedIds.size>0" class="bulk-bar">
+      <span class="bulk-count">{{ selectedIds.size }} selected</span>
+      <div class="bulk-sep"></div>
+      <button class="bulk-btn" @click="bulkComplete">Mark done</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="bulk-btn" @click="showBulkDate=!showBulkDate">Reschedule</button>
+        <input v-if="showBulkDate" type="date" v-model="bulkDate" @change="bulkReschedule" style="width:auto;padding:5px 8px;font-size:.78rem;color:var(--tx);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:var(--rs)"/>
+      </div>
+      <button class="bulk-btn" @click="bulkMove">Move workspace</button>
+      <button class="bulk-btn danger" @click="bulkDelete">Delete</button>
+      <div class="bulk-sep"></div>
+      <button class="bulk-btn" @click="exitSelect">Cancel</button>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav">
+      <span class="brand">Scope</span>
+      <button class="nt" :class="tab==='work'?'aw':''" @click="setTab('work')"><span class="pip pip-w"></span>Work</button>
+      <button class="nt" :class="tab==='personal'?'ap':''" @click="setTab('personal')"><span class="pip pip-p"></span>Personal</button>
+      <button class="nt" :class="tab==='weekly'?'an':''" @click="tab='weekly'">Weekly</button>
+      <button class="nt" :class="tab==='goals'?'an':''" @click="tab='goals'">Goals</button>
+      <div class="nr">
+        <button class="ib ib-label" @click="showBrf=true;if(settings.apiKey&&!brfText)loadBrf()" title="Morning briefing">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="ib ib-label" @click="showEOD=true;if(settings.apiKey&&!eodText)loadEOD()" title="End of day review">
+          <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button v-if="isWS" class="ib ib-label" @click="enterFocus" title="Focus mode">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M3 12h1m16 0h1M12 3v1m0 16v1M5.6 5.6l.7.7m11.4-.7-.7.7M5.6 18.4l.7-.7m11.4.7-.7-.7"/></svg>
+        </button>
+        <div v-if="syncStatus" style="font-size:.7rem;padding:4px 10px;border-radius:999px;font-weight:600;white-space:nowrap;" :style="{background:syncStatus==='synced'?'rgba(16,185,129,0.2)':syncStatus==='error'?'rgba(239,68,68,0.2)':'rgba(255,255,255,0.1)',color:syncStatus==='synced'?'#34d399':syncStatus==='error'?'#f87171':'rgba(255,255,255,0.6)'}">{{ syncStatus==='syncing'?'Syncing...':syncStatus==='synced'?'Synced':syncStatus==='error'?'Sync issue':'' }}</div>
+        <button class="ib" @click="tab=tab==='settings'?'work':'settings'">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- WORKSPACE -->
+    <div v-if="isWS" class="pg">
+
+      <!-- Stats -->
+      <div class="sg">
+        <div class="sc" :class="tview==='today'&&!statFilter?'active':''" :style="{'--sc-color':'var(--acc)'}" @click="setFilter('today')">
+          <div class="sl">Due today</div><div class="sv" :style="{color:'var(--acc)'}">{{ todayCnt }}</div>
+        </div>
+        <div class="sc" :class="statFilter==='critical'?'active':''" :style="{'--sc-color':'var(--cr)'}" @click="setFilter('critical')">
+          <div class="sl">Critical</div><div class="sv" style="color:var(--cr)">{{ critCnt }}</div>
+        </div>
+        <div class="sc" :class="tview==='done'&&!statFilter?'active':''" :style="{'--sc-color':'var(--ok)'}" @click="setFilter('done')">
+          <div class="sl">Done today</div><div class="sv" style="color:var(--ok)">{{ doneTd }}</div>
+        </div>
+        <div class="sc" :class="statFilter==='escalated'?'active':''" :style="{'--sc-color':'var(--hi)'}" @click="setFilter('escalated')">
+          <div class="sl">Escalated</div><div class="sv" style="color:var(--hi)">{{ escCnt }}</div>
+        </div>
+      </div>
+
+      <!-- Progress + Capacity -->
+      <div class="prog-section">
+        <div class="prog-row"><span>Tasks completed today</span><strong>{{ doneTd }} of {{ tdDue }} due</strong></div>
+        <div class="pbar"><div class="pfill pfill-tasks" :style="{width:(tdDue>0?Math.round(doneTd/tdDue*100):0)+'%'}"></div></div>
+        <div class="prog-row"><span>Estimated time completed</span><strong>{{ fmtTime(completedMins)||'0m' }} of {{ fmtTime(todayEstMins)||'0m' }} estimated</strong></div>
+        <div class="pbar" style="margin-bottom:0"><div class="pfill pfill-time" :style="{width:(todayEstMins>0?Math.min(Math.round(completedMins/todayEstMins*100),100):0)+'%'}"></div></div>
+        <div class="capr">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Daily load:</span>
+          <div class="capb"><div class="pfill-cap" :style="{height:'100%',borderRadius:'4px',width:Math.min(capMins/480*100,100)+'%',background:capMins>480?'var(--cr)':'var(--acc)',transition:'width .4s'}"></div></div>
+          <strong :style="{color:capMins>480?'var(--cr)':'var(--acc)',minWidth:'65px'}">{{ fmtTime(capMins)||'0m' }} / 8h</strong>
+        </div>
+      </div>
+
+      <!-- Add bar -->
+      <div class="abar">
+        <button :class="['btai',addMode==='ai'?'on':'']" @click="addMode=addMode==='ai'?'none':'ai';parsed=null;parseErr='';quickIn=''">AI add</button>
+        <button :class="['btai',addMode==='manual'?'on':'']" @click="addMode=addMode==='manual'?'none':'manual'">+ Manual</button>
+        <button class="btg" @click="startVoice" style="font-size:.83rem;padding:8px 15px">{{ listening?'Listening...':'Voice' }}</button>
+        <button class="btg" :style="selectMode?{background:'var(--acc)',color:'#fff',borderColor:'var(--acc)'}:{}" @click="toggleSelectMode" style="font-size:.83rem;padding:8px 15px;margin-left:auto">{{ selectMode?'Done selecting':'Select' }}</button>
+      </div>
+
+      <!-- AI Panel -->
+      <div v-if="addMode==='ai'" class="panel" style="border-left:4px solid var(--acc);margin-bottom:1.25rem">
+        <div class="pt">AI add &mdash; describe your task</div>
+        <div style="font-size:.73rem;color:var(--tx3);margin-bottom:10px">e.g. "Finish the client proposal by Thursday, urgent" or "Call accountant this week"</div>
+        <div class="qr">
+          <input v-model="quickIn" @keydown.enter="doParse" placeholder="What needs doing?"/>
+          <button class="btp bts" style="white-space:nowrap" @click="doParse" :disabled="!quickIn.trim()||parsing">{{ parsing?'Parsing...':'Add' }}</button>
+        </div>
+        <div v-if="parseErr" class="etxt">{{ parseErr }}</div>
+        <div v-if="parsed&&!parsing" class="pbox">
+          <div class="phd">Confirm or edit:</div>
+          <div class="fs">
+            <div><label class="fl">Title</label><input v-model="parsed.title"/></div>
+            <div><label class="fl">Notes</label><input v-model="parsed.notes" placeholder="(none)"/></div>
+            <div class="fg2">
+              <div><label class="fl">Priority</label>
+                <select v-model="parsed.priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+              </div>
+              <div><label class="fl">Due date</label><input type="date" v-model="parsed.dueDate"/></div>
+            </div>
+            <div class="fg2">
+              <div><label class="fl">Start date</label><input type="date" v-model="parsed.startDate"/></div>
+              <div><label class="fl">Category</label><input v-model="parsed.category" placeholder="(none)"/></div>
+            </div>
+            <div class="fg2">
+              <div><label class="fl">Workspace</label>
+                <select v-model="parsed.workspace"><option value="work">Work</option><option value="personal">Personal</option></select>
+              </div>
+            </div>
+            <div>
+              <label class="fl">Time estimate: {{ fmtTime(parsed.timeEstimate)||'none' }}</label>
+              <div class="slw"><input type="range" min="0" max="480" step="15" v-model.number="parsed.timeEstimate"/><span class="slv">{{ fmtTime(parsed.timeEstimate)||'--' }}</span></div>
+            </div>
+            <div v-if="wsGoals.length">
+              <label class="fl">Link to goal</label>
+              <select v-model="parsed.goalId"><option value="">(no goal)</option><option v-for="g in wsGoals" :key="g.id" :value="g.id">{{ g.title }}</option></select>
+            </div>
+            <div v-if="incompleteTasks(parsed.workspace).length">
+              <label class="fl">Blocked by (optional)</label>
+              <select v-model="parsed.blockedBy"><option value="">(not blocked)</option><option v-for="t in incompleteTasks(parsed.workspace)" :key="t.id" :value="t.id">{{ t.title }}</option></select>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+              <button class="btg bts" @click="parsed=null;quickIn=''">Retry</button>
+              <button class="btp bts" @click="commitTask(parsed)">Add task</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manual Panel -->
+      <div v-if="addMode==='manual'" class="panel" style="margin-bottom:1.25rem">
+        <div class="pt">New task</div>
+        <div class="fs">
+          <input v-model="form.title" @keydown.enter="form.title.trim()&&commitTask(form)" placeholder="Task title *"/>
+          <textarea v-model="form.notes" rows="2" placeholder="Notes (optional)"></textarea>
+          <div class="fg2">
+            <div><label class="fl">Priority</label>
+              <select v-model="form.priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+            </div>
+            <div><label class="fl">Due date</label><input type="date" v-model="form.dueDate"/></div>
+          </div>
+          <div class="fg2">
+            <div><label class="fl">Start date <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.7rem">(when to surface this task)</span></label><input type="date" v-model="form.startDate"/></div>
+            <div><label class="fl">Category</label><input v-model="form.category" placeholder="e.g. admin"/></div>
+          </div>
+          <div class="fg2">
+            <div><label class="fl">Workspace</label>
+              <select v-model="form.workspace"><option value="work">Work</option><option value="personal">Personal</option></select>
+            </div>
+          </div>
+          <div>
+            <label class="fl">Time estimate: {{ fmtTime(form.timeEstimate)||'none' }}</label>
+            <div class="slw"><input type="range" min="0" max="480" step="15" v-model.number="form.timeEstimate"/><span class="slv">{{ fmtTime(form.timeEstimate)||'--' }}</span></div>
+          </div>
+          <div v-if="wsGoals.length">
+            <label class="fl">Link to goal</label>
+            <select v-model="form.goalId"><option value="">(no goal)</option><option v-for="g in wsGoals" :key="g.id" :value="g.id">{{ g.title }}</option></select>
+          </div>
+          <div v-if="incompleteTasks(form.workspace).length">
+            <label class="fl">Blocked by (optional)</label>
+            <select v-model="form.blockedBy"><option value="">(not blocked)</option><option v-for="t in incompleteTasks(form.workspace)" :key="t.id" :value="t.id">{{ t.title }}</option></select>
+          </div>
+          <div>
+            <label class="fl" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" v-model="form.recurring.enabled" style="width:auto"/> Recurring task
+            </label>
+            <div v-if="form.recurring.enabled" style="margin-top:8px;padding:10px 12px;background:var(--sf2);border-radius:var(--rs)">
+              <div style="display:flex;gap:6px;margin-bottom:8px">
+                <button v-for="tp in ['daily','weekly','interval']" :key="tp" class="btg bts" :style="form.recurring.type===tp?{background:'var(--acc)',color:'#fff',border:'none'}:{}" @click="form.recurring.type=tp">{{ tp==='daily'?'Daily':tp==='weekly'?'Weekly':'Every N days' }}</button>
+              </div>
+              <div v-if="form.recurring.type==='weekly'" class="rds">
+                <button v-for="(dk,i) in DK" :key="dk" :class="['rd',form.recurring.days.includes(dk)?'on':'']" @click="toggleRecurDay(dk)">{{ DS[i] }}</button>
+              </div>
+              <div v-if="form.recurring.type==='interval'" class="slw" style="margin-top:6px">
+                <span style="font-size:.74rem;color:var(--tx2);white-space:nowrap">Every</span>
+                <input type="range" min="1" max="30" step="1" v-model.number="form.recurring.interval"/>
+                <span class="slv">{{ form.recurring.interval }} days</span>
+              </div>
+            </div>
+          </div>
+          <div class="fa">
+            <button class="btg bts" @click="addMode='none'">Discard</button>
+            <button class="btp bts" @click="commitTask(form)" :disabled="!form.title.trim()">Add task</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Escalation notice -->
+      <div v-if="escCnt>0" class="esn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+        <strong>{{ escCnt }} task{{ escCnt!==1?'s':'' }}</strong> auto-escalated based on deadline or age.
+      </div>
+
+      <!-- View tabs -->
+      <div class="vts">
+        <button v-for="[k,l] in [['today','Today'],['upcoming','Next 7 days'],['all','All active'],['done','Done']]" :key="k"
+          :class="['vt',activeView===k?'on':'']" @click="tview=k;statFilter=null">
+          {{ l }}<span v-if="k==='today'&&todayCnt>0" class="vbd">{{ todayCnt }}</span>
+        </button>
+        <button v-if="statFilter" class="vt on" style="margin-left:4px">
+          {{ statFilter==='critical'?'Critical only':'Escalated only' }}
+          <span style="margin-left:6px;opacity:.7" @click.stop="statFilter=null">x</span>
+        </button>
+        <button v-if="categoryFilter" class="vt on" style="margin-left:4px;background:var(--sf2);color:var(--tx)">
+          #{{ categoryFilter }}
+          <span style="margin-left:6px;opacity:.6;cursor:pointer" @click.stop="categoryFilter=null">x</span>
+        </button>
+      </div>
+      <hr class="dhr"/>
+
+      <!-- Task list -->
+      <div v-if="displayedTasks.length===0" class="empty">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <p>{{ tview==='done'?'No completed tasks.':tview==='today'?'Nothing due today.':tview==='upcoming'?'No upcoming tasks.':'All clear.' }}</p>
+      </div>
+      <div v-else class="tl">
+        <div v-for="(t,i) in displayedTasks" :key="t.id"
+          :class="['tc',t.completed?'done':'',editingId===t.id?'editing':'',dragId===t.id?'dragging':'',dragOvId===t.id&&dragId!==t.id?'dov':'',isBlocked(t)?'blocked-card':'',selectMode?'select-mode':'']"
+          :style="{borderLeftColor:editingId===t.id?'var(--acc)':t.completed?'var(--bd2)':PC[t.priority]}"
+          :draggable="editingId!==t.id&&!selectMode"
+          @dragstart="editingId!==t.id&&!selectMode&&(dragId=t.id)"
+          @dragover.prevent="dragOvId=t.id"
+          @drop="dropTask"
+          @dragend="dragId=null"
+          @click="selectMode&&toggleSelect(t.id)">
+
+          <template v-if="editingId!==t.id">
+            <div v-if="selectMode" :class="['sel-ck',selectedIds.has(t.id)?'on':'']" @click.stop="toggleSelect(t.id)">
+              <svg v-if="selectedIds.has(t.id)" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <button v-else :class="['ck',t.completed?'on':'']" :disabled="isBlocked(t)" @click.stop="toggleTask(t.id)">
+              <svg v-if="t.completed" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+            <div class="tb">
+              <div class="ttt">{{ t.title }}<span v-if="t.timeEstimate" style="font-size:.66rem;color:var(--tx3);margin-left:8px;font-weight:400">{{ fmtTime(t.timeEstimate) }}</span></div>
+              <div class="tgs">
+                <span class="tg" :style="{background:pbg(t),color:PC[t.priority]}">{{ PL[t.priority] }}{{ t.escalationReasons&&t.escalationReasons.length&&!t.completed?' +':'' }}</span>
+                <span v-if="isBlocked(t)" class="tg tg-blocked">Blocked by: {{ blockerTitle(t) }}</span>
+                <span v-if="t.carriedForward&&!t.completed" class="tg tgcf">carried {{ t.carriedForwardCount }}x</span>
+                <span v-if="t.recurring&&!t.completed" class="tg tgr">recurring</span>
+                <span v-if="t.category" class="tg tgc" style="cursor:pointer" :style="categoryFilter===t.category?{background:'var(--acc)',color:'#fff',borderColor:'var(--acc)'}:{}" @click.stop="setCategoryFilter(t.category)">#{{ t.category }}</span>
+                <span v-if="t.goalId" class="tg tgr">goal</span>
+              </div>
+              <div class="tmt">
+                <span v-if="t.dueDate" :class="ddLbl(t).ov?'ov':''">Due: {{ ddLbl(t).label }}{{ ddLbl(t).s>0&&!t.completed?' ('+ddLbl(t).s+'d)':'' }}<span v-if="t.originalDue" style="color:var(--tx3);margin-left:5px">was {{ fmtDate(t.originalDue) }}</span></span>
+                <span v-if="t.startDate&&t.startDate!==t.dueDate&&!t.completed" style="color:var(--tx3)">Started: {{ fmtDate(t.startDate) }}</span>
+                <span v-if="t.escalationReasons&&t.escalationReasons.length&&!t.completed" style="color:var(--wn)">escalated: {{ t.escalationReasons.join(', ') }}</span>
+              </div>
+              <div v-if="t.notes&&expandedTasks.has(t.id)" class="tnts">{{ t.notes }}</div>
+              <div v-if="(t.snoozeCount||0)>=3&&!t.completed" class="ndg">Snoozed {{ t.snoozeCount }} times &mdash; still relevant? <button class="btg bts" @click.stop="removeTask(t.id)">Remove</button></div>
+              <div v-if="snoozeTasks.has(t.id)&&!t.completed" class="snr">
+                <span>Snooze to:</span>
+                <button class="btg bts" @click.stop="doSnooze(t.id,1)">Tomorrow</button>
+                <button class="btg bts" @click.stop="doSnooze(t.id,3)">3 days</button>
+                <button class="btg bts" @click.stop="doSnooze(t.id,7)">1 week</button>
+                <button class="btg bts" @click.stop="closeSnooze(t.id)">Cancel</button>
+              </div>
+            </div>
+            <div class="tac" v-if="!selectMode">
+              <button v-if="t.notes" class="ib" @click.stop="toggleExpand(t.id)"><svg viewBox="0 0 24 24"><polyline :points="expandedTasks.has(t.id)?'18 15 12 9 6 15':'6 9 12 15 18 9'"/></svg></button>
+              <button class="ib" @click.stop="startEdit(t)" title="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button v-if="!t.completed" class="ib" @click.stop="toggleSnooze(t.id)" title="Snooze"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+              <button class="ib" @click.stop="removeTask(t.id)" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+            </div>
+          </template>
+
+          <!-- EDIT FORM -->
+          <template v-else>
+            <div class="edit-panel">
+              <div style="font-size:.82rem;font-weight:700;margin-bottom:10px;color:var(--acc)">Edit task</div>
+              <div class="fs">
+                <input v-model="editForm.title" placeholder="Task title *"/>
+                <textarea v-model="editForm.notes" rows="2" placeholder="Notes (optional)"></textarea>
+                <div class="fg2">
+                  <div><label class="fl">Priority</label>
+                    <select v-model="editForm.priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+                  </div>
+                  <div><label class="fl">Due date</label><input type="date" v-model="editForm.dueDate"/></div>
+                </div>
+                <div class="fg2">
+                  <div><label class="fl">Start date</label><input type="date" v-model="editForm.startDate"/></div>
+                  <div><label class="fl">Category</label><input v-model="editForm.category" placeholder="(none)"/></div>
+                  <div><label class="fl">Workspace</label>
+                    <select v-model="editForm.workspace"><option value="work">Work</option><option value="personal">Personal</option></select>
+                  </div>
+                </div>
+                <div>
+                  <label class="fl">Time estimate: {{ fmtTime(editForm.timeEstimate)||'none' }}</label>
+                  <div class="slw"><input type="range" min="0" max="480" step="15" v-model.number="editForm.timeEstimate"/><span class="slv">{{ fmtTime(editForm.timeEstimate)||'--' }}</span></div>
+                </div>
+                <div v-if="wsGoals.length">
+                  <label class="fl">Link to goal</label>
+                  <select v-model="editForm.goalId"><option value="">(no goal)</option><option v-for="g in wsGoals" :key="g.id" :value="g.id">{{ g.title }}</option></select>
+                </div>
+                <div v-if="incompleteTasks(editForm.workspace).filter(x=>x.id!==t.id).length">
+                  <label class="fl">Blocked by</label>
+                  <select v-model="editForm.blockedBy"><option value="">(not blocked)</option><option v-for="bt in incompleteTasks(editForm.workspace).filter(x=>x.id!==t.id)" :key="bt.id" :value="bt.id">{{ bt.title }}</option></select>
+                </div>
+                <div class="fa">
+                  <button class="btg bts" @click="editingId=null;editForm=null">Cancel</button>
+                  <button class="btp bts" @click="updateTask(t.id)" :disabled="!editForm.title.trim()">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div v-if="tview==='done'&&archivedCount>0" class="archive-note">{{ archivedCount }} older task{{ archivedCount!==1?'s':'' }} archived &mdash; adjust in Settings</div>
+
+      <!-- Scratchpad -->
+      <div class="scr">
+        <div class="scrl">{{ ws==='work'?'Work Notes':'Personal Notes' }}</div>
+        <textarea class="scra" :placeholder="'Jot anything down...'" :value="scratch[ws]" @input="updateScratch(ws,$event.target.value)"></textarea>
+      </div>
+    </div>
+
+    <!-- WEEKLY -->
+    <div v-if="tab==='weekly'" class="pg">
+      <div class="wk-nav">
+        <h2>Weekly Planner</h2>
+        <div class="wk-nav-btns">
+          <button class="btg bts" @click="weekOffset--">&#8592;</button>
+          <button class="btg bts" @click="weekOffset=0" :disabled="weekOffset===0">Today</button>
+          <button class="btg bts" @click="weekOffset++">&#8594;</button>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:.78rem;color:var(--tx3);margin-bottom:1rem;font-weight:500">
+        {{ weekLabel }}
+      </div>
+      <div class="wk">
+        <div v-for="d in weekDays" :key="d" :class="['dc',d===today()?'dt':'',d===selDay?'ds':'']" @click="selDay=selDay===d?null:d">
+          <div class="dn">{{ DS[new Date(d+'T00:00:00').getDay()] }}</div>
+          <div class="dd">{{ new Date(d+'T00:00:00').getDate() }}</div>
+          <div class="dps">
+            <div v-for="t in dayTasks(d,'work').slice(0,2)" :key="t.id" :class="['dp','dpw',t.completed?'dpd':'']">{{ t.title.slice(0,12) }}{{ t.title.length>12?'...':'' }}</div>
+            <div v-for="t in dayTasks(d,'personal').slice(0,2)" :key="t.id" :class="['dp','dpp',t.completed?'dpd':'']">{{ t.title.slice(0,12) }}{{ t.title.length>12?'...':'' }}</div>
+            <div v-if="dayAllTasks(d).length>4" class="dm">+{{ dayAllTasks(d).length-4 }} more</div>
+          </div>
+          <div v-if="dayMins(d)>0" class="dcp" :style="{background:'linear-gradient(90deg,'+(dayMins(d)>480?'var(--cr)':'var(--w)')+' '+Math.min(dayMins(d)/480*100,100)+'%,var(--bd) '+Math.min(dayMins(d)/480*100,100)+'%)'}"></div>
+        </div>
+      </div>
+      <div v-if="selDay" class="wdt">
+        <div class="wdh"><span>{{ DF[new Date(selDay+'T00:00:00').getDay()] }}, {{ fmtDate(selDay) }}</span><button class="btg bts" @click="selDay=null">Close</button></div>
+        <div v-for="w in ['work','personal']" :key="w" style="margin-bottom:1rem">
+          <div v-if="dayTasks(selDay,w).length">
+            <div class="wwl" :style="{color:w==='work'?'var(--w)':'var(--p)'}">{{ w==='work'?'Work':'Personal' }}</div>
+            <div v-for="t in dayTasks(selDay,w)" :key="t.id" class="wtr">
+              <button :class="['ck',t.completed?'on':'']" style="width:16px;height:16px" @click="toggleTask(t.id)">
+                <svg v-if="t.completed" viewBox="0 0 24 24" width="9" height="9" stroke="var(--ok)" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span :style="{width:'8px',height:'8px',borderRadius:'50%',background:PC[t.priority],flexShrink:0,display:'inline-block'}"></span>
+              <span :style="{flex:1,textDecoration:t.completed?'line-through':'none',color:t.completed?'var(--tx3)':'var(--tx)'}">{{ t.title }}</span>
+              <span v-if="t.timeEstimate" style="font-size:.67rem;color:var(--tx3)">{{ fmtTime(t.timeEstimate) }}</span>
+              <span v-if="ddLbl(t).ov" style="font-size:.63rem;color:var(--cr)">{{ ddLbl(t).s }}d overdue</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="!selDay" style="display:flex;gap:12px;font-size:.73rem;justify-content:center;margin-top:.5rem">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:var(--w);display:inline-block"></span>Work</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:var(--p);display:inline-block"></span>Personal</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--w) 60%,var(--bd) 60%);display:inline-block"></span>Daily load bar</span>
+      </div>
+    </div>
+
+    <!-- GOALS -->
+    <div v-if="tab==='goals'" class="pg">
+      <div class="sec-hd">
+        <h2>Goals</h2>
+        <button class="btp bts" @click="showGform=!showGform">{{ showGform?'Cancel':'+ New goal' }}</button>
+      </div>
+      <div v-if="showGform" class="panel" style="margin-bottom:1.25rem">
+        <div class="pt">New goal</div>
+        <div class="fs">
+          <input v-model="gform.title" placeholder="Goal title *"/>
+          <textarea v-model="gform.description" rows="2" placeholder="Description (optional)"></textarea>
+          <div class="fg2">
+            <div><label class="fl">Target date</label><input type="date" v-model="gform.targetDate"/></div>
+            <div><label class="fl">Workspace</label><select v-model="gform.workspace"><option value="work">Work</option><option value="personal">Personal</option></select></div>
+          </div>
+          <div class="fa"><button class="btg bts" @click="showGform=false">Discard</button><button class="btp bts" @click="addGoal" :disabled="!gform.title.trim()">Create goal</button></div>
+        </div>
+      </div>
+      <div v-if="!goals.length&&!showGform" class="empty">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <p>No goals yet. Create one to organise tasks into projects.</p>
+      </div>
+      <div v-for="wsp in ['work','personal']" :key="wsp">
+        <div v-if="goals.filter(g=>g.workspace===wsp).length" style="margin-bottom:1.75rem">
+          <div :style="{fontSize:'.7rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.07em',color:wsp==='work'?'var(--w)':'var(--p)',marginBottom:'10px',display:'flex',alignItems:'center',gap:'7px'}">
+            <span class="pip" :class="wsp==='work'?'pip-w':'pip-p'"></span>{{ wsp==='work'?'Work':'Personal' }}
+          </div>
+          <div v-for="g in goals.filter(gg=>gg.workspace===wsp)" :key="g.id" class="gc" :style="{opacity:g.completed?.55:1}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.85rem">
+              <div>
+                <div style="font-size:.98rem;font-weight:700;letter-spacing:-0.01em" :style="{textDecoration:g.completed?'line-through':'none'}">{{ g.title }}</div>
+                <div v-if="g.description" style="font-size:.75rem;color:var(--tx3);margin-top:3px">{{ g.description }}</div>
+                <div v-if="g.targetDate" style="font-size:.72rem;color:var(--tx3);margin-top:3px">Target: {{ fmtDate(g.targetDate) }}</div>
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0">
+                <button class="btg bts" @click="goalAddId=goalAddId===g.id?null:g.id">{{ goalAddId===g.id?'Cancel':'+ Add task' }}</button>
+                <button class="btg bts" @click="toggleGoal(g.id)">{{ g.completed?'Reopen':'Done' }}</button>
+                <button class="btg bts" style="color:var(--er)" @click="removeGoal(g.id)">Delete</button>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.74rem;color:var(--tx2);margin-bottom:5px;font-weight:600">
+              <span>{{ tasks.filter(t=>t.goalId===g.id&&t.completed).length }}/{{ tasks.filter(t=>t.goalId===g.id).length }} tasks complete</span>
+              <strong>{{ goalPct(g.id) }}%</strong>
+            </div>
+            <div class="pbar" style="margin-bottom:.85rem"><div class="pfill" :style="{width:goalPct(g.id)+'%',background:wsp==='work'?'var(--w)':'var(--p)'}"></div></div>
+
+            <!-- Add task to goal inline form -->
+            <div v-if="goalAddId===g.id" class="gc-add">
+              <div style="font-size:.8rem;font-weight:700;margin-bottom:10px;color:var(--acc)">Add task to &ldquo;{{ g.title }}&rdquo;</div>
+              <div class="fs">
+                <input v-model="goalTaskForm.title" placeholder="Task title *" @keydown.enter="goalTaskForm.title.trim()&&commitGoalTask(g)"/>
+                <div class="fg2">
+                  <div><label class="fl">Priority</label>
+                    <select v-model="goalTaskForm.priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+                  </div>
+                  <div><label class="fl">Due date</label><input type="date" v-model="goalTaskForm.dueDate"/></div>
+                </div>
+                <div class="fg2">
+                  <div><label class="fl">Start date (optional)</label><input type="date" v-model="goalTaskForm.startDate"/></div>
+                </div>
+                <div>
+                  <label class="fl">Time estimate: {{ fmtTime(goalTaskForm.timeEstimate)||'none' }}</label>
+                  <div class="slw"><input type="range" min="0" max="480" step="15" v-model.number="goalTaskForm.timeEstimate"/><span class="slv">{{ fmtTime(goalTaskForm.timeEstimate)||'--' }}</span></div>
+                </div>
+                <div class="fa"><button class="btp bts" @click="commitGoalTask(g)" :disabled="!goalTaskForm.title.trim()">Add to goal</button></div>
+              </div>
+            </div>
+
+            <div v-if="tasks.filter(t=>t.goalId===g.id).length" style="margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--bd)">
+              <div v-for="t in tasks.filter(tt=>tt.goalId===g.id)" :key="t.id" class="gt">
+                <span :style="{width:'8px',height:'8px',borderRadius:'50%',background:PC[t.priority],display:'inline-block',flexShrink:0}"></span>
+                <span :style="{flex:1,textDecoration:t.completed?'line-through':'none',color:t.completed?'var(--tx3)':'var(--tx)'}">{{ t.title }}</span>
+                <span v-if="t.dueDate" style="font-size:.67rem;color:var(--tx3)">{{ fmtDate(t.dueDate) }}</span>
+                <button class="ib" style="width:24px;height:24px;padding:0;display:flex;align-items:center;justify-content:center" @click="toggleTask(t.id)">
+                  <svg viewBox="0 0 24 24" :style="{stroke:t.completed?'var(--ok)':'var(--bd2)'}"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div v-if="tab==='settings'" class="pg">
+      <div class="sec-hd"><h2>Settings</h2></div>
+      <div class="panel">
+        <div class="ss">
+          <div class="ssl">Supabase Sync</div>
+          <div class="ssnote">Connect to Supabase to sync tasks across all your devices. Enter your Project URL and Publishable key from Supabase Settings &rarr; API Keys.</div>
+          <div class="fs" style="gap:10px">
+            <div>
+              <label class="fl">Project URL</label>
+              <input v-model="sbUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" type="url"/>
+            </div>
+            <div>
+              <label class="fl">Publishable Key</label>
+              <input v-model="sbKey" placeholder="sb_publishable_..." type="password"/>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;align-items:center">
+              <span v-if="syncStatus" style="font-size:.75rem;font-weight:600" :style="{color:syncStatus==='synced'?'var(--ok)':syncStatus==='error'?'var(--er)':'var(--tx3)'}">{{ syncStatus==='syncing'?'Connecting...':syncStatus==='synced'?'Connected and synced':syncStatus==='error'?'Could not connect — check credentials':'' }}</span>
+              <button class="btp bts" @click="saveSupabase" :disabled="!sbUrl.trim()||!sbKey.trim()">Save &amp; sync</button>
+            </div>
+          </div>
+        </div>
+        <div class="ss">
+          <div class="ssl">Anthropic API Key</div>
+          <div class="ssnote">Powers AI add, voice, morning briefing and EOD review. Get one at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Stored only in your browser.</div>
+          <div class="ssr">
+            <input type="password" v-model="apiIn" @keydown.enter="saveApiKey" placeholder="sk-ant-..."/>
+            <button class="btp bts" @click="saveApiKey">Save</button>
+            <button v-if="settings.apiKey" class="btg bts" @click="apiIn='';settings.apiKey='';sv(SK_SET,settings)">Clear</button>
+          </div>
+          <div v-if="apiMsg" class="otxt">{{ apiMsg }}</div>
+        </div>
+        <div class="ss">
+          <div class="ssl">Done task archive</div>
+          <div class="ssnote">Completed tasks older than this are archived from the Done tab (still stored, just hidden).</div>
+          <div class="ssr">
+            <select v-model.number="settings.archiveDays" @change="sv(SK_SET,settings)" style="max-width:200px">
+              <option :value="7">7 days</option>
+              <option :value="14">14 days</option>
+              <option :value="30">30 days</option>
+              <option :value="60">60 days</option>
+              <option :value="90">90 days</option>
+            </select>
+          </div>
+        </div>
+        <div class="ss">
+          <div class="ssl">End of day wrap-up time</div>
+          <div class="ssnote">The app will prompt for an EOD review when you open it after this time (if you haven't done one today).</div>
+          <div class="ssr">
+            <select v-model.number="settings.eodHour" @change="sv(SK_SET,settings)" style="max-width:200px">
+              <option v-for="h in [15,16,17,18,19,20,21,22,23]" :key="h" :value="h">{{ h>12?h-12:h }}:00 {{ h>=12?'pm':'am' }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="ss">
+          <div class="ssl">Change Password</div>
+          <div class="ssnote">SHA-256 hashed and stored locally in your browser.</div>
+          <div class="fs">
+            <input type="password" v-model="pwf.o" placeholder="Current password"/>
+            <input type="password" v-model="pwf.n" placeholder="New password (min 6 characters)"/>
+            <input type="password" v-model="pwf.c" @keydown.enter="changePw" placeholder="Confirm new password"/>
+            <div class="fa"><button class="btp bts" @click="changePw">Update password</button></div>
+            <div v-if="pwMsg" :class="pwMsg.ok?'otxt':'etxt'">{{ pwMsg.msg }}</div>
+          </div>
+        </div>
+        <div class="ss">
+          <div class="ssl">Lock</div>
+          <div class="ssnote">Return to the lock screen and end your session.</div>
+          <button @click="doLock" style="background:var(--er-bg);color:var(--er);border:1.5px solid var(--er);border-radius:var(--rs);padding:7px 16px;font-size:.8rem;font-family:inherit;cursor:pointer;font-weight:600">Lock Scope</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script>
+const PW_KEY="scope_pw_v1",SESS_KEY="scope_sess_v1";
+const SK_T="scope_tasks_v3",SK_G="scope_goals_v1",SK_S="scope_scratch_v1",SK_SET="scope_settings_v1";
+const DEF_HASH="8be4597192dff630aa3cf649614716e680b4f2ff3c21fb98b77b046587adab84";
+const SB_URL_KEY='scope_sb_url';const SB_KEY_KEY='scope_sb_key';
+const PO={critical:0,high:1,medium:2,low:3};
+const PC={critical:"#ef4444",high:"#f59e0b",medium:"#10b981",low:"#9ca3af"};
+const PL={critical:"Critical",high:"High",medium:"Medium",low:"Low"};
+const PUP={low:"medium",medium:"high",high:"critical",critical:"critical"};
+const PBGL={critical:"#fee2e2",high:"#fef3c7",medium:"#d1fae5",low:"#f3f4f6"};
+const PBGD={critical:"#3b0000",high:"#2d1a00",medium:"#052e16",low:"#1f2937"};
+const DS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DF=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const DK=["sun","mon","tue","wed","thu","fri","sat"];
+async function sha256(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("");}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function today(){return new Date().toISOString().split("T")[0];}
+function daysFrom(d,r){if(!d)return null;return Math.round((new Date(d+"T00:00:00")-new Date(r+"T00:00:00"))/86400000);}
+function daysSince(iso){return Math.round((Date.now()-new Date(iso))/86400000);}
+function addDays(ds,n){const d=new Date(ds+"T00:00:00");d.setDate(d.getDate()+n);return d.toISOString().split("T")[0];}
+function isDark(){return window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches;}
+function fmtTime(m){if(!m||m<=0)return null;if(m<60)return m+"m";const h=Math.floor(m/60),r=m%60;return r?h+"h "+r+"m":h+"h";}
+function fmtDate(d){if(!d)return null;return new Date(d+"T00:00:00").toLocaleDateString(undefined,{day:"numeric",month:"short"});}
+function ld(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch{return def;}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+function isAuth(){return sessionStorage.getItem(SESS_KEY)==="1";}
+function getHash(){return localStorage.getItem(PW_KEY)||DEF_HASH;}
+function escalate(t,td){
+  if(t.completed)return t;
+  let p=t.manualPriority||t.priority;const rs=[];
+  const du=daysFrom(t.dueDate,td);
+  if(du!==null){if(du<=0&&PO[p]>PO.critical){p="critical";rs.push("due today");}else if(du===1&&PO[p]>PO.high){p="high";rs.push("due tomorrow");}else if(du<=3&&PO[p]>PO.medium){p="medium";rs.push("due in 3 days");}}
+  const cf=t.carriedForwardCount||0;if(cf>=2){const b=PUP[p];if(b!==p){p=b;rs.push("carried fwd "+cf+"x");}}
+  const age=daysSince(t.createdAt);if(age>=10&&!t.ageEscalated&&PO[p]<PO.critical){const b=PUP[p];if(b!==p){p=b;rs.push("10+ days old");}}
+  return{...t,priority:p,escalationReasons:rs,ageEscalated:age>=10?true:t.ageEscalated};
+}
+function carryFwd(t,td){if(!t.completed&&t.dueDate&&t.dueDate<td)return{...t,dueDate:td,carriedForward:true,carriedForwardCount:(t.carriedForwardCount||0)+1,originalDue:t.originalDue||t.dueDate};return t;}
+function genRecurring(tasks,td){
+  const out=[];
+  tasks.forEach(t=>{
+    if(!t.recurring||!t.completed||!t.completedAt)return;
+    const cd=t.completedAt.split("T")[0];if(cd>=td)return;
+    let nd=null;
+    if(t.recurring.type==="daily"){nd=td;}
+    else if(t.recurring.type==="weekly"&&t.recurring.days&&t.recurring.days.length){for(let i=0;i<=7;i++){const d=new Date(td+"T00:00:00");d.setDate(d.getDate()+i);if(t.recurring.days.includes(DK[d.getDay()])){nd=d.toISOString().split("T")[0];break;}}}
+    else if(t.recurring.type==="interval"&&t.recurring.interval){nd=addDays(cd,t.recurring.interval);if(nd<td)nd=td;}
+    if(!nd||tasks.some(x=>x.recurringParent===t.id&&!x.completed))return;
+    out.push({...t,id:uid(),completed:false,completedAt:null,createdAt:new Date().toISOString(),dueDate:nd,carriedForward:false,carriedForwardCount:0,originalDue:null,escalationReasons:[],ageEscalated:false,recurringParent:t.id,snoozeCount:0,blockedBy:null});
+  });
+  return out;
+}
+function processLoad(tasks){const td=today();let p=tasks.map(t=>carryFwd(t,td)).map(t=>escalate(t,td));return[...p,...genRecurring(p,td)];}
+function sortT(list){return[...list].sort((a,b)=>{if(a.order!==undefined&&b.order!==undefined)return a.order-b.order;const pd=PO[a.priority]-PO[b.priority];if(pd!==0)return pd;if(a.dueDate&&b.dueDate)return a.dueDate.localeCompare(b.dueDate);if(a.dueDate)return -1;if(b.dueDate)return 1;return new Date(b.createdAt)-new Date(a.createdAt);});}
+async function callAI(sys,msg,key){const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:800,system:sys,messages:[{role:"user",content:msg}]})});const d=await r.json();if(d.error)throw new Error(d.error.message);return d.content.map(b=>b.text||"").join("");}
+async function parseAI(text,key){const td=today();const raw=await callAI("Return ONLY valid JSON (no markdown) with: title(string),notes(string),priority(critical|high|medium|low),dueDate(YYYY-MM-DD or null),startDate(YYYY-MM-DD or null, the date to start working on it if mentioned),category(string or null),timeEstimate(minutes:15/30/45/60/90/120/180/240/300/360/420/480 or null). Today="+td+". Infer priority. Resolve relative dates. startDate must be before or equal to dueDate.",text,key);return JSON.parse(raw.replace(/```json|```/g,"").trim());}
+async function makeReview(tasks,goals,key,type){
+  const td=today();
+  const due=tasks.filter(t=>!t.completed&&t.dueDate<=td);
+  const done=tasks.filter(t=>t.completed&&t.completedAt&&t.completedAt.startsWith(td));
+  const ov=tasks.filter(t=>!t.completed&&t.dueDate<td);
+  const cr=tasks.filter(t=>!t.completed&&t.priority==="critical");
+  const doneMins=done.reduce((s,t)=>s+(t.timeEstimate||0),0);
+  const ctx="Date: "+td+"\nCompleted today: "+(done.map(t=>t.title).join("; ")||"none")+" ("+fmtTime(doneMins)+" est)\nStill due today: "+(due.map(t=>t.title+" ("+PL[t.priority]+")").join("; ")||"none")+"\nOverdue: "+ov.length+"\nCritical: "+(cr.map(t=>t.title).join(", ")||"none")+"\nGoals: "+(goals.filter(g=>!g.completed).map(g=>g.title).join(", ")||"none");
+  if(type==="eod"){return await callAI("Write a concise EOD review (150-200 words, plain text). Cover: what was accomplished, what slipped and why, tomorrow's priority order based on what's outstanding, one practical observation about workload patterns. Be direct and businesslike.",ctx,key);}
+  const dueTasks=tasks.filter(t=>!t.completed&&t.dueDate<=td);
+  const ctx2="Date: "+td+"\nDue today: "+(dueTasks.map(t=>"["+t.workspace+"] "+t.title+" ("+PL[t.priority]+", "+(fmtTime(t.timeEstimate)||"no estimate")+")").join("; ")||"none")+"\nOverdue: "+ov.length+"\nCritical: "+(cr.map(t=>t.title).join(", ")||"none")+"\nLoad: "+(fmtTime(dueTasks.reduce((s,t)=>s+(t.timeEstimate||0),0))||"unknown")+"\nGoals: "+(goals.filter(g=>!g.completed).map(g=>g.title).join(", ")||"none");
+  return await callAI("Write a focused morning briefing (150-200 words, plain text). Cover: what to do first and why, any concerns about overdue tasks or heavy load, one motivating close. Be direct.",ctx2,key);
+}
+
+async function sbGet(url,key,table){try{const r=await fetch(url+'/rest/v1/'+table+'?id=eq.all&select=data',{headers:{'apikey':key,'Authorization':'Bearer '+key}});if(!r.ok)return null;const d=await r.json();return d.length?d[0].data:null;}catch{return null;}}
+async function sbSet(url,key,table,data){try{await fetch(url+'/rest/v1/'+table,{method:'POST',headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify([{id:'all',data:data,updated_at:new Date().toISOString()}])});}catch{}}
+const {createApp,ref,computed,onMounted,watch}=Vue;
+const EF={title:"",notes:"",priority:"medium",dueDate:"",startDate:"",category:"",timeEstimate:60,goalId:"",workspace:"work",blockedBy:"",recurring:{enabled:false,type:"weekly",days:[],interval:3}};
+const EGF={title:"",description:"",targetDate:"",workspace:"work"};
+const EGTF={title:"",priority:"medium",dueDate:"",startDate:"",timeEstimate:60};
+
+createApp({
+  setup(){
+    const authed=ref(isAuth());
+    const tasks=ref(processLoad(ld(SK_T,[])));
+    const goals=ref(ld(SK_G,[]));
+    const scratch=ref(ld(SK_S,{work:"",personal:""}));
+    const settings=ref(ld(SK_SET,{apiKey:"",lastBriefing:"",lastEOD:"",archiveDays:30,eodHour:19}));
+    const tab=ref("work");const tview=ref("today");const statFilter=ref(null);
+    const categoryFilter=ref(null);
+    const addMode=ref("none");const quickIn=ref("");const parsing=ref(false);
+    const parsed=ref(null);const parseErr=ref("");const form=ref({...EF});
+    const gform=ref({...EGF});const showGform=ref(false);
+    const goalAddId=ref(null);const goalTaskForm=ref({...EGTF});
+    const listening=ref(false);
+    const showBrf=ref(false);const brfText=ref("");const brfLoad=ref(false);
+    const showEOD=ref(false);const eodText=ref("");const eodLoad=ref(false);
+    const focusMode=ref(false);const focusIndex=ref(0);const elapsedSecs=ref(0);
+    let focusTimer=null;
+    const selDay=ref(null);const weekOffset=ref(0);
+    const dragId=ref(null);const dragOvId=ref(null);
+    const expandedTasks=ref(new Set());const snoozeTasks=ref(new Set());
+    const editingId=ref(null);const editForm=ref(null);
+    const selectMode=ref(false);const selectedIds=ref(new Set());
+    const bulkDate=ref("");const showBulkDate=ref(false);
+    const pwf=ref({o:"",n:"",c:""});const pwMsg=ref(null);
+    const apiIn=ref(ld(SK_SET,{apiKey:""}).apiKey||"");const apiMsg=ref(null);
+    const lkPw=ref("");const lkErr=ref("");const lkLoading=ref(false);
+const sbUrl=ref(localStorage.getItem(SB_URL_KEY)||'');const sbKey=ref(localStorage.getItem(SB_KEY_KEY)||'');const syncStatus=ref('');
+    const srRef={current:null};
+
+    const ws=computed(()=>tab.value==="work"||tab.value==="personal"?tab.value:"work");
+    const isWS=computed(()=>tab.value==="work"||tab.value==="personal");
+    const wsGoals=computed(()=>goals.value.filter(g=>g.workspace===ws.value&&!g.completed));
+    const tdv=computed(()=>today());
+    const activeView=computed(()=>statFilter.value?null:tview.value);
+    const archiveCutoff=computed(()=>{const d=new Date();d.setDate(d.getDate()-(settings.value.archiveDays||30));return d;});
+
+    const wsTasks=computed(()=>tasks.value.filter(t=>t.workspace===ws.value));
+    const displayedTasks=computed(()=>{
+      let base=tasks.value.filter(t=>t.workspace===ws.value);
+      if(categoryFilter.value)base=base.filter(t=>t.category===categoryFilter.value);
+      let list;
+      if(statFilter.value==="critical")list=base.filter(t=>!t.completed&&t.priority==="critical");
+      else if(statFilter.value==="escalated")list=base.filter(t=>!t.completed&&t.escalationReasons&&t.escalationReasons.length>0);
+      else if(tview.value==="today")list=base.filter(t=>!t.completed&&(t.startDate?t.startDate<=tdv.value:t.dueDate<=tdv.value));
+      else if(tview.value==="upcoming")list=base.filter(t=>!t.completed&&(t.startDate?t.startDate>tdv.value:t.dueDate>tdv.value)&&daysFrom(t.startDate||t.dueDate,tdv.value)<=7);
+      else if(tview.value==="all")list=base.filter(t=>!t.completed);
+      else list=base.filter(t=>t.completed&&t.completedAt&&new Date(t.completedAt)>=archiveCutoff.value);
+      return sortT(list);
+    });
+    const todayCnt=computed(()=>wsTasks.value.filter(t=>!t.completed&&(t.startDate?t.startDate<=tdv.value:t.dueDate<=tdv.value)).length);
+    const critCnt=computed(()=>wsTasks.value.filter(t=>!t.completed&&t.priority==="critical").length);
+    const doneTd=computed(()=>wsTasks.value.filter(t=>t.completed&&t.completedAt&&t.completedAt.startsWith(tdv.value)).length);
+    const escCnt=computed(()=>wsTasks.value.filter(t=>!t.completed&&t.escalationReasons&&t.escalationReasons.length>0).length);
+    const capMins=computed(()=>wsTasks.value.filter(t=>!t.completed&&t.dueDate===tdv.value).reduce((s,t)=>s+(t.timeEstimate||0),0));
+    const tdDue=computed(()=>wsTasks.value.filter(t=>!t.completed&&t.dueDate<=tdv.value).length);
+    const completedMins=computed(()=>wsTasks.value.filter(t=>t.completed&&t.completedAt&&t.completedAt.startsWith(tdv.value)).reduce((s,t)=>s+(t.timeEstimate||0),0));
+    const todayEstMins=computed(()=>{
+      const dueToday=wsTasks.value.filter(t=>t.dueDate<=tdv.value);
+      return dueToday.reduce((s,t)=>s+(t.timeEstimate||0),0);
+    });
+    const archivedCount=computed(()=>wsTasks.value.filter(t=>t.completed&&t.completedAt&&new Date(t.completedAt)<archiveCutoff.value).length);
+    const focusTasks=computed(()=>sortT(tasks.value.filter(t=>t.workspace===ws.value&&!t.completed)));
+    const focusTask=computed(()=>focusTasks.value[focusIndex.value]||null);
+    const elapsedFmt=computed(()=>{const s=elapsedSecs.value;const m=Math.floor(s/60);const sc=s%60;return(m<10?"0"+m:m)+":"+(sc<10?"0"+sc:sc);});
+
+    const weekDays=computed(()=>{
+      const s=new Date(tdv.value+"T00:00:00");
+      s.setDate(s.getDate()-s.getDay()+(weekOffset.value*7));
+      return Array.from({length:7},(_,i)=>{const d=new Date(s);d.setDate(d.getDate()+i);return d.toISOString().split("T")[0];});
+    });
+    const weekLabel=computed(()=>{
+      const days=weekDays.value;
+      const s=new Date(days[0]+"T00:00:00");const e=new Date(days[6]+"T00:00:00");
+      const fmt=(d)=>d.toLocaleDateString(undefined,{day:"numeric",month:"short"});
+      return fmt(s)+" &ndash; "+fmt(e)+(weekOffset.value===0?" (this week)":weekOffset.value===-1?" (last week)":weekOffset.value===1?" (next week)":"");
+    });
+
+    watch(ws,(nws)=>{document.documentElement.style.setProperty("--acc",nws==="work"?"#2563eb":"#7c3aed");document.documentElement.style.setProperty("--acl",nws==="work"?"#eff6ff":"#f5f3ff");document.documentElement.style.setProperty("--acm",nws==="work"?"#dbeafe":"#ede9fe");},{immediate:true});
+
+    onMounted(async()=>{
+      if(sbUrl.value&&sbKey.value){
+        syncStatus.value='syncing';
+        const [sbT,sbG,sbN]=await Promise.all([sbGet(sbUrl.value,sbKey.value,'tasks'),sbGet(sbUrl.value,sbKey.value,'goals'),sbGet(sbUrl.value,sbKey.value,'notes')]);
+        if(sbT){tasks.value=processLoad(sbT);sv(SK_T,tasks.value);}
+        if(sbG){goals.value=sbG;sv(SK_G,sbG);}
+        if(sbN){scratch.value=sbN;sv(SK_S,sbN);}
+        syncStatus.value=sbT||sbG||sbN?'synced':'error';
+        setTimeout(()=>syncStatus.value='',3000);
+      }
+      const h=new Date().getHours();const td=today();
+      if(h<12&&settings.value.lastBriefing!==td){showBrf.value=true;if(settings.value.apiKey)loadBrf();const ns={...settings.value,lastBriefing:td};settings.value=ns;sv(SK_SET,ns);}
+      if(h>=(settings.value.eodHour||19)&&settings.value.lastEOD!==td){showEOD.value=true;if(settings.value.apiKey)loadEOD();const ns={...settings.value,lastEOD:td};settings.value=ns;sv(SK_SET,ns);}
+    });
+
+    const persist=(t)=>{tasks.value=t;sv(SK_T,t);if(sbUrl.value&&sbKey.value)sbSet(sbUrl.value,sbKey.value,'tasks',t);};
+    const persistG=(g)=>{goals.value=g;sv(SK_G,g);if(sbUrl.value&&sbKey.value)sbSet(sbUrl.value,sbKey.value,'goals',g);};
+    const setFilter=(f)=>{if(f==="today"||f==="done"){statFilter.value=null;tview.value=f;}else{statFilter.value=statFilter.value===f?null:f;}};
+    const setCategoryFilter=(c)=>{categoryFilter.value=categoryFilter.value===c?null:c;};
+    const unlock=async()=>{if(!lkPw.value){lkErr.value="Please enter a password.";return;}lkLoading.value=true;const h=await sha256(lkPw.value);if(h===getHash()){sessionStorage.setItem(SESS_KEY,"1");authed.value=true;lkErr.value="";}else{lkErr.value="Incorrect password.";lkPw.value="";}lkLoading.value=false;};
+    const doLock=()=>{sessionStorage.removeItem(SESS_KEY);location.reload();};
+    const setTab=(t)=>{tab.value=t;if(t==="work"||t==="personal")form.value={...form.value,workspace:t};categoryFilter.value=null;};
+    const isBlocked=(t)=>{if(!t.blockedBy)return false;const blocker=tasks.value.find(x=>x.id===t.blockedBy);return blocker&&!blocker.completed;};
+    const blockerTitle=(t)=>{if(!t.blockedBy)return "";const b=tasks.value.find(x=>x.id===t.blockedBy);return b?b.title:"";};
+    const incompleteTasks=(wsp)=>tasks.value.filter(t=>!t.completed&&t.workspace===(wsp||ws.value));
+    const toggleTask=(id)=>{const t2=today();persist(tasks.value.map(t=>{if(t.id!==id)return t;const u={...t,completed:!t.completed,completedAt:!t.completed?new Date().toISOString():null};return escalate(u,t2);}));};
+    const removeTask=(id)=>{if(editingId.value===id){editingId.value=null;editForm.value=null;}persist(tasks.value.filter(t=>t.id!==id));};
+    const snoozeTask=(id,n)=>{const t2=today();const nd=addDays(t2,n);persist(tasks.value.map(t=>{if(t.id!==id)return t;return escalate({...t,dueDate:nd,carriedForward:false,snoozeCount:(t.snoozeCount||0)+1},t2);}));};
+    const doSnooze=(id,n)=>{snoozeTask(id,n);const s=new Set(snoozeTasks.value);s.delete(id);snoozeTasks.value=s;};
+    const closeSnooze=(id)=>{const s=new Set(snoozeTasks.value);s.delete(id);snoozeTasks.value=s;};
+    const commitTask=(f)=>{
+      if(!f.title||!f.title.trim())return;
+      const t2=today();
+      const base={id:uid(),title:f.title.trim(),notes:(f.notes||"").trim(),manualPriority:f.priority,priority:f.priority,dueDate:f.dueDate||t2,startDate:f.startDate||null,category:(f.category||"").trim().toLowerCase(),timeEstimate:f.timeEstimate||null,goalId:f.goalId||null,blockedBy:f.blockedBy||null,workspace:f.workspace||ws.value,completed:false,createdAt:new Date().toISOString(),carriedForward:false,carriedForwardCount:0,originalDue:null,escalationReasons:[],ageEscalated:false,snoozeCount:0,recurring:f.recurring&&f.recurring.enabled?f.recurring:null,order:Date.now()};
+      persist([...tasks.value,escalate(base,t2)]);
+      addMode.value="none";quickIn.value="";parsed.value=null;parseErr.value="";form.value={...EF,workspace:ws.value};
+    };
+    const commitGoalTask=(g)=>{
+      if(!goalTaskForm.value.title.trim())return;
+      const t2=today();
+      const base={id:uid(),title:goalTaskForm.value.title.trim(),notes:"",manualPriority:goalTaskForm.value.priority,priority:goalTaskForm.value.priority,dueDate:goalTaskForm.value.dueDate||t2,startDate:goalTaskForm.value.startDate||null,category:"",timeEstimate:goalTaskForm.value.timeEstimate||null,goalId:g.id,blockedBy:null,workspace:g.workspace,completed:false,createdAt:new Date().toISOString(),carriedForward:false,carriedForwardCount:0,originalDue:null,escalationReasons:[],ageEscalated:false,snoozeCount:0,recurring:null,order:Date.now()};
+      persist([...tasks.value,escalate(base,t2)]);
+      goalTaskForm.value={...EGTF};goalAddId.value=null;
+    };
+    const startEdit=(t)=>{editingId.value=t.id;editForm.value={title:t.title,notes:t.notes||"",priority:t.manualPriority||t.priority,dueDate:t.dueDate||"",startDate:t.startDate||"",category:t.category||"",timeEstimate:t.timeEstimate||0,goalId:t.goalId||"",blockedBy:t.blockedBy||"",workspace:t.workspace};};
+    const updateTask=(id)=>{
+      if(!editForm.value||!editForm.value.title.trim())return;
+      const t2=today();
+      persist(tasks.value.map(t=>{if(t.id!==id)return t;const u={...t,title:editForm.value.title.trim(),notes:(editForm.value.notes||"").trim(),manualPriority:editForm.value.priority,priority:editForm.value.priority,dueDate:editForm.value.dueDate||t2,startDate:editForm.value.startDate||null,category:(editForm.value.category||"").trim().toLowerCase(),timeEstimate:editForm.value.timeEstimate||null,goalId:editForm.value.goalId||null,blockedBy:editForm.value.blockedBy||null,workspace:editForm.value.workspace};return escalate(u,t2);}));
+      editingId.value=null;editForm.value=null;
+    };
+    const doParse=async()=>{if(!quickIn.value.trim())return;if(!settings.value.apiKey){parseErr.value="Add your API key in Settings first.";return;}parsing.value=true;parseErr.value="";try{const r=await parseAI(quickIn.value,settings.value.apiKey);parsed.value={...EF,...r,startDate:r.startDate||'',workspace:ws.value,recurring:{enabled:false,type:"weekly",days:[],interval:3},blockedBy:"",goalId:""};}catch(e){parseErr.value="Could not parse: "+(e.message||"try again");}parsing.value=false;};
+    const startVoice=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){parseErr.value="Voice not supported in this browser. Try Chrome.";addMode.value="ai";return;}const r=new SR();r.lang="en-AU";r.interimResults=false;r.onstart=()=>listening.value=true;r.onend=()=>listening.value=false;r.onresult=async(e)=>{const txt=e.results[0][0].transcript;quickIn.value=txt;addMode.value="ai";if(settings.value.apiKey){parsing.value=true;try{const res=await parseAI(txt,settings.value.apiKey);parsed.value={...EF,...res,startDate:res.startDate||'',workspace:ws.value,recurring:{enabled:false,type:"weekly",days:[],interval:3},blockedBy:"",goalId:""};}catch{parseErr.value="Parse failed.";}parsing.value=false;}};r.onerror=()=>listening.value=false;srRef.current=r;r.start();};
+    const loadBrf=async()=>{brfLoad.value=true;brfText.value="";try{const t=await makeReview(tasks.value,goals.value,settings.value.apiKey,"morning");brfText.value=t;}catch(e){brfText.value="Could not generate: "+(e.message||"check API key");}brfLoad.value=false;};
+    const loadEOD=async()=>{eodLoad.value=true;eodText.value="";try{const t=await makeReview(tasks.value,goals.value,settings.value.apiKey,"eod");eodText.value=t;}catch(e){eodText.value="Could not generate: "+(e.message||"check API key");}eodLoad.value=false;};
+    const enterFocus=()=>{focusIndex.value=0;focusMode.value=true;elapsedSecs.value=0;focusTimer=setInterval(()=>elapsedSecs.value++,1000);};
+    const exitFocus=()=>{focusMode.value=false;if(focusTimer)clearInterval(focusTimer);focusTimer=null;elapsedSecs.value=0;};
+    const focusDone=()=>{if(focusTask.value){toggleTask(focusTask.value.id);elapsedSecs.value=0;}};
+    const focusSkip=()=>{focusIndex.value++;elapsedSecs.value=0;};
+    const toggleSelectMode=()=>{selectMode.value=!selectMode.value;if(!selectMode.value){selectedIds.value=new Set();showBulkDate.value=false;}};
+    const exitSelect=()=>{selectMode.value=false;selectedIds.value=new Set();showBulkDate.value=false;};
+    const toggleSelect=(id)=>{const s=new Set(selectedIds.value);if(s.has(id))s.delete(id);else s.add(id);selectedIds.value=s;};
+    const bulkComplete=()=>{const t2=today();persist(tasks.value.map(t=>{if(!selectedIds.value.has(t.id))return t;const u={...t,completed:true,completedAt:new Date().toISOString()};return escalate(u,t2);}));exitSelect();};
+    const bulkReschedule=()=>{if(!bulkDate.value)return;const t2=today();persist(tasks.value.map(t=>{if(!selectedIds.value.has(t.id))return t;return escalate({...t,dueDate:bulkDate.value},t2);}));showBulkDate.value=false;exitSelect();};
+    const bulkMove=()=>{const dest=ws.value==="work"?"personal":"work";persist(tasks.value.map(t=>selectedIds.value.has(t.id)?{...t,workspace:dest}:t));exitSelect();};
+    const bulkDelete=()=>{if(!confirm("Delete "+selectedIds.value.size+" tasks?"))return;persist(tasks.value.filter(t=>!selectedIds.value.has(t.id)));exitSelect();};
+    const addGoal=()=>{if(!gform.value.title.trim())return;persistG([...goals.value,{id:uid(),title:gform.value.title.trim(),description:gform.value.description.trim(),targetDate:gform.value.targetDate,workspace:gform.value.workspace,completed:false,createdAt:new Date().toISOString()}]);gform.value={...EGF};showGform.value=false;};
+    const toggleGoal=(id)=>persistG(goals.value.map(g=>g.id===id?{...g,completed:!g.completed}:g));
+    const removeGoal=(id)=>persistG(goals.value.filter(g=>g.id!==id));
+    const updateScratch=(w,v)=>{const ns={...scratch.value,[w]:v};scratch.value=ns;sv(SK_S,ns);if(sbUrl.value&&sbKey.value)sbSet(sbUrl.value,sbKey.value,'notes',ns);};
+    const saveApiKey=()=>{const ns={...settings.value,apiKey:apiIn.value};settings.value=ns;sv(SK_SET,ns);apiMsg.value="API key saved";setTimeout(()=>apiMsg.value=null,2000);};
+    const saveSupabase=async()=>{localStorage.setItem(SB_URL_KEY,sbUrl.value.trim());localStorage.setItem(SB_KEY_KEY,sbKey.value.trim());syncStatus.value='syncing';const [sbT,sbG,sbN]=await Promise.all([sbGet(sbUrl.value.trim(),sbKey.value.trim(),'tasks'),sbGet(sbUrl.value.trim(),sbKey.value.trim(),'goals'),sbGet(sbUrl.value.trim(),sbKey.value.trim(),'notes')]);if(sbT){tasks.value=processLoad(sbT);sv(SK_T,tasks.value);}if(sbG){goals.value=sbG;sv(SK_G,sbG);}if(sbN){scratch.value=sbN;sv(SK_S,sbN);}syncStatus.value='synced';setTimeout(()=>syncStatus.value='',3000);}; 
+    const changePw=async()=>{pwMsg.value=null;if(pwf.value.n!==pwf.value.c){pwMsg.value={ok:false,msg:"Passwords don't match."};return;}const oh=await sha256(pwf.value.o);if(oh!==getHash()){pwMsg.value={ok:false,msg:"Current password incorrect."};return;}if(pwf.value.n.length<6){pwMsg.value={ok:false,msg:"Min 6 characters."};return;}localStorage.setItem(PW_KEY,await sha256(pwf.value.n));pwMsg.value={ok:true,msg:"Password updated."};pwf.value={o:"",n:"",c:""};};
+    const dropTask=()=>{if(!dragId.value||!dragOvId.value||dragId.value===dragOvId.value)return;const l=[...tasks.value];const fi=l.findIndex(t=>t.id===dragId.value),ti=l.findIndex(t=>t.id===dragOvId.value);if(fi>=0&&ti>=0){const[item]=l.splice(fi,1);l.splice(ti,0,item);l.forEach((t,i)=>t.order=i);persist(l);}dragId.value=null;dragOvId.value=null;};
+    const toggleExpand=(id)=>{const s=new Set(expandedTasks.value);if(s.has(id))s.delete(id);else s.add(id);expandedTasks.value=s;};
+    const toggleSnooze=(id)=>{const s=new Set(snoozeTasks.value);if(s.has(id))s.delete(id);else s.add(id);snoozeTasks.value=s;};
+    const toggleRecurDay=(dk)=>{const days=form.value.recurring.days||[];const nd=days.includes(dk)?days.filter(x=>x!==dk):[...days,dk];form.value={...form.value,recurring:{...form.value.recurring,days:nd}};};
+    const pbg=(t)=>(isDark()?PBGD:PBGL)[t.priority];
+    const ddLbl=(t)=>{if(!t.dueDate)return{label:"",ov:false,s:0};const diff=daysFrom(t.dueDate,tdv.value);if(diff===0)return{label:"Due today",ov:false,s:0};if(diff===1)return{label:"Tomorrow",ov:false,s:0};if(diff<0){const s=Math.abs(diff);return{label:s+"d overdue",ov:!t.completed,s};}if(diff<=6)return{label:"In "+diff+" days",ov:false,s:0};return{label:fmtDate(t.dueDate),ov:false,s:0};};
+    const dayTasks=(d,w)=>tasks.value.filter(t=>t.dueDate===d&&t.workspace===w);
+    const dayAllTasks=(d)=>tasks.value.filter(t=>t.dueDate===d);
+    const dayMins=(d)=>dayAllTasks(d).reduce((s,t)=>s+(t.timeEstimate||0),0);
+    const goalPct=(gid)=>{const lk=tasks.value.filter(t=>t.goalId===gid);return lk.length?Math.round(lk.filter(t=>t.completed).length/lk.length*100):0;};
+
+    return{
+      authed,tasks,goals,scratch,settings,tab,tview,statFilter,addMode,quickIn,parsing,parsed,parseErr,
+      form,gform,showGform,goalAddId,goalTaskForm,listening,
+      showBrf,brfText,brfLoad,showEOD,eodText,eodLoad,
+      focusMode,focusIndex,focusTasks,focusTask,elapsedFmt,
+      selDay,weekOffset,weekDays,weekLabel,dragId,dragOvId,
+      expandedTasks,snoozeTasks,editingId,editForm,
+      selectMode,selectedIds,bulkDate,showBulkDate,
+      pwf,pwMsg,apiIn,apiMsg,lkPw,lkErr,lkLoading,
+      ws,isWS,wsGoals,displayedTasks,todayCnt,critCnt,doneTd,escCnt,
+      capMins,tdDue,completedMins,todayEstMins,archivedCount,activeView,
+      PC,PL,DS,DF,DK,SK_SET,fmtTime,fmtDate,today,pbg,ddLbl,
+      isBlocked,blockerTitle,incompleteTasks,
+      dayTasks,dayAllTasks,dayMins,goalPct,
+      sbUrl,sbKey,syncStatus,saveSupabase,
+      categoryFilter,setCategoryFilter,
+      unlock,doLock,setTab,setFilter,toggleTask,removeTask,snoozeTask,doSnooze,closeSnooze,
+      commitTask,commitGoalTask,startEdit,updateTask,doParse,startVoice,
+      loadBrf,loadEOD,enterFocus,exitFocus,focusDone,focusSkip,
+      toggleSelectMode,exitSelect,toggleSelect,bulkComplete,bulkReschedule,bulkMove,bulkDelete,
+      addGoal,toggleGoal,removeGoal,updateScratch,saveApiKey,changePw,
+      dropTask,toggleExpand,toggleSnooze,toggleRecurDay,sv,
+    };
+  }
+}).mount("#app");
+</script>
+</body>
+</html>
